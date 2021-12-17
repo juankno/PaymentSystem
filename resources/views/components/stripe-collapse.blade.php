@@ -1,0 +1,1 @@
+<small>You will be redirect yo the stripe checkout page</small>
