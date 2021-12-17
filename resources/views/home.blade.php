@@ -23,13 +23,28 @@
                                 <label for="currency">Currency</label>
                                 <select name="currency" id="currency" class="custom-select">
                                     @foreach ($currencies as $currency)
-                                        <option value="{{ $currency->iso }}">{{ strtoupper($currency->iso) }}</option>
+                                    <option value="{{ $currency->iso }}">{{ strtoupper($currency->iso) }}</option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
+                        <div class="row mt-3">
+                            <div class="col">
+                                <label>Select the desired payment platform: </label>
+                                <div class="form-group">
+                                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                        @foreach ($paymentPlatforms as $platform)
+                                        <label class="btn btn-outline-secondary rounded m-2 p-1">
+                                            <input type="radio" name="payment_platform" value="{{ $platform->id}}" required>
+                                            <img class="img-thumbnail" src="{{ asset($platform->image) }}" alt="{{ $platform->name }}">
+                                        </label>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="text-center mt-3">
-                            <button type="submit" id="payButton" class="btn btn-primary">Pay Now</button>
+                            <button type="submit" id="payButton" class="btn btn-primary float-right">Pay Now!</button>
                         </div>
                     </form>
                 </div>
