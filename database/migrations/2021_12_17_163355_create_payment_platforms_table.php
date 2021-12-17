@@ -16,7 +16,7 @@ class CreatePaymentPlatformsTable extends Migration
         Schema::create('payment_platforms', function (Blueprint $table) {
             $table->id();
             $table->string('name', 50);
-            $table->string('iamge');
+            $table->string('image');
             $table->timestamps();
         });
     }
