@@ -19,6 +19,14 @@
                                     using dot " . "
                                 </small>
                             </div>
+                            <div class="col-auto">
+                                <label for="currency">Currency</label>
+                                <select name="currency" id="currency" class="custom-select">
+                                    @foreach ($currencies as $currency)
+                                        <option value="{{ $currency->iso }}">{{ strtoupper($currency->iso) }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                         <div class="text-center mt-3">
                             <button type="submit" id="payButton" class="btn btn-primary">Pay Now</button>
