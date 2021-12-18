@@ -7,7 +7,7 @@ use GuzzleHttp\Client;
 trait ConsumesExternalServices
 {
 
-    public function makeRequest($method, $requestUrl, $queryParams = [], $formParams = [], $headers = [], $isJsonRequest = false)
+    public function makeRequest(string $method, string $requestUrl, array $queryParams = [], array $formParams = [], array $headers = [], bool $isJsonRequest = false)
     {
         $client = new Client([
             'verify' => false,

@@ -43,23 +43,44 @@ class PaypalService
 
     public function createOrder($value, $currency)
     {
-        return $this->makeRequest('POST', '/v2/checkout/orders', [], [
-            'intent' => 'CAPTURE',
-            'purchase_units' => [
-                0 => [
-                    'amount' => [
-                        'currency_code' => strtoupper($currency),
-                        'value' => $value,
+        return $this->makeRequest(
+            'POST',
+            '/v2/checkout/orders',
+            [],
+            [
+                'intent' => 'CAPTURE',
+                'purchase_units' => [
+                    0 => [
+                        'amount' => [
+                            'currency_code' => strtoupper($currency),
+                            'value' => $value,
+                        ]
                     ]
+                ],
+                'application_context' => [
+                    'brand_name' => config('app.name'),
+                    'shipping_preference' => 'NO_SHIPPING',
+                    'user_action' => 'PAY_NOW',
+                    'return_url' => route('approval'),
+                    'cancel_url' => route('cancelled'),
                 ]
             ],
-            'application_context' => [
-                'brand_name' => config('app.name'),
-                'shipping_preference' => 'NO_SHIPPING',
-                'user_action' => 'PAY_NOW',
-                'return_url' => route('approval'),
-                'cancel_url' => route('cancelled'),
+            [],
+            $isJsonRequest = true
+        );
+    }
+
+
+    public function capturePayment(string $approvalId)
+    {
+        return $this->makeRequest(
+            'POST',
+            "/v2/checkout/orders/{$approvalId}/capture",
+            [],
+            [],
+            [
+                'Content-Type' => 'application/json',
             ]
-        ], [], $isJsonRequest = true);
+        );
     }
 }
