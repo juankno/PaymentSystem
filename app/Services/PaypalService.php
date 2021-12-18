@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Traits\ConsumesExternalServices;
+use Illuminate\Http\Request;
 
 class PaypalService
 {
@@ -30,7 +31,7 @@ class PaypalService
 
     public function decodeResponse($response)
     {
-        return $response;
+        return json_decode($response);
     }
 
     public function resolveAccessToken()
@@ -38,6 +39,18 @@ class PaypalService
         $credentials = base64_encode("{$this->clientId}:{$this->clientSecret}");
 
         return "Basic {$credentials}";
+    }
+
+
+    public function handlePayment(Request $request)
+    {
+        $order = $this->createOrder($request->value, $request->currency);
+       
+        $orderLinks = collect($order->links);
+
+        $approve = $orderLinks->where('rel', 'approve')->first();
+
+        return redirect($approve->href);
     }
 
 
@@ -80,7 +93,7 @@ class PaypalService
             [],
             [
                 'Content-Type' => 'application/json',
-            ]
+            ],
         );
     }
 }
