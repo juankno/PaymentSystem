@@ -10,7 +10,8 @@ trait ConsumesExternalServices
     public function makeRequest($method, $requestUrl, $queryParams = [], $formParams = [], $headers = [], $isJsonRequest = false)
     {
         $client = new Client([
-            'base_uri' => $this->base_uri,
+            'verify' => false,
+            'base_uri' => $this->baseUri,
         ]);
 
         if (method_exists($this, 'resolveAuthorization')) {
