@@ -14,7 +14,7 @@ Fork this repository, then clone your fork, and run this in your newly created d
 composer install
 ```
 
-This project use ([laravel ui](https://laravel.com/docs/7.x/frontend)* for the frontend Scaffolding
+This project use *([laravel ui](https://laravel.com/docs/7.x/frontend)* for the frontend Scaffolding
 ``` bash
 npm install && npm run dev
 ```
@@ -43,14 +43,10 @@ If you are work in local mode you can use the seeders in the migration:
 php artisan migrate:refresh --seed or force with | php artisan migrate:fresh --seed
 ```
 
-now you can use for the authentication:
-```
-php artisan passport:install
-```
 
 *If you need more information about paypal api or Stripe then you can read the documentation
-([Stripe Api](https://stripe.com/docs)*
-([Paypal Developer](https://developer.paypal.com/home)*
+*([Stripe Api](https://stripe.com/docs)*
+*([Paypal Developer](https://developer.paypal.com/home)*
 
 Your Laravel starter project is now up and running! 
 
