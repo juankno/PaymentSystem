@@ -10,9 +10,9 @@ class StripeService
     use ConsumesExternalServices;
 
     protected $key;
-    
+
     protected $secret;
-    
+
     protected $baseUri;
 
     public function __construct()
@@ -25,7 +25,7 @@ class StripeService
 
     public function resolveAuthorization(&$queryParams, &$formParams, &$headers)
     {
-        //
+        $headers['Authorization'] = $this->resolveAccessToken();
     }
 
     public function decodeResponse($response)
@@ -35,7 +35,7 @@ class StripeService
 
     public function resolveAccessToken()
     {
-        //
+        return "Bearer {$this->secret}";
     }
 
 
@@ -47,7 +47,7 @@ class StripeService
 
     public function handleApproval()
     {
-       //
+        //
     }
 
 
