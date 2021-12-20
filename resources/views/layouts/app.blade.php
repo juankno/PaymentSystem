@@ -93,10 +93,14 @@
                 @endif
 
                 @if (session()->has('success'))
-                <div class="alert alert-success">
+                <div>
                     <ul>
                         @foreach (session()->get('success') as $message)
-                        <li>{{ $message }}</li>
+                        <li class="alert alert-success alert-dismissible fade show" role="alert">{{ $message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </li>
                         @endforeach
                     </ul>
                 </div>

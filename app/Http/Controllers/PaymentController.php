@@ -15,26 +15,26 @@ class PaymentController extends Controller
             'payment_platform' => ['required', 'exists:payment_platforms,id'],
         ];
 
-       $validation = $request->validate($rules);
+        $request->validate($rules);
 
-       $paymentPlatform = resolve(PaypalService::class);
+        $paymentPlatform = resolve(PaypalService::class);
 
-       return $paymentPlatform->handlePayment($request);
-
+        return $paymentPlatform->handlePayment($request);
     }
 
 
     public function approval()
     {
-       $paymentPlatform = resolve(PaypalService::class);
+        $paymentPlatform = resolve(PaypalService::class);
 
-       return $paymentPlatform->handleApproval();
-
+        return $paymentPlatform->handleApproval();
     }
 
 
     public function cancelled()
     {
-        # code...
+        return redirect()
+        ->route('home')
+        ->withErrors('You cancelled the payment');
     }
 }
