@@ -41,13 +41,47 @@ class StripeService
 
     public function handlePayment(Request $request)
     {
-        //
+        $request->validate([
+            'payment_method' => 'required'
+        ]);
+
+        $intent = $this->createIntent($request->value, $request->currency, $request->payment_method);
+
+        session()->put('paymentIntent', $intent->id);
+
+        return redirect()->route('approval');
     }
 
 
     public function handleApproval()
     {
         //
+    }
+
+
+    public function createIntent($value, $currency, $paymentMethod)
+    {
+        return $this->makeRequest(
+            'POST',
+            '/v1/payment_intents',
+            [],
+            [
+                'amount' => round($value * $this->resolveFactor($currency)),
+                'currency' => strtolower($currency),
+                'payment_method' => $paymentMethod,
+                'confirmation_method' => 'manual'
+            ]
+        );
+    }
+
+
+    public function confirmPayment(string $paymentIntentId)
+    {
+
+        return $this->makeRequest(
+            'POST',
+            "/v1/payment_intents/{$paymentIntentId}/confirm",
+        );
     }
 
 
