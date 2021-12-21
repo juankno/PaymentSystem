@@ -56,8 +56,31 @@ class MercadoPagoService
     }
 
 
+    public function createPayment($value, $currency, $cardNetwork, $cardToken, $email, $installements = 1)
+    {
+        return $this->makeRequest(
+            'POST',
+            '/v1/payments',
+            [],
+            [
+                'payer' => [
+                    'email' => $email
+                ],
+                'binary_mode' => true,
+                'transaction_amount' => round($value * $this->resolveFactor($currency)),
+                'payment_method_id' => $cardNetwork,
+                'token' => $cardToken,
+                'installements' => $installements,
+                'statement_descriptor' => config('app.name'),
+            ],
+            [],
+            $isJsonRequest = true,
+        );
+    }
+
+
     public function resolveFactor($currency)
     {
-       return $this->converter->convertCurrency($currency, $this->baseCurrency);
+        return $this->converter->convertCurrency($currency, $this->baseCurrency);
     }
 }
