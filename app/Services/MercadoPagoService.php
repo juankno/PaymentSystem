@@ -13,14 +13,16 @@ class MercadoPagoService
     protected $publicKey;
     protected $accessToken;
     protected $baseCurrency;
+    protected $converter;
 
 
-    public function __construct()
+    public function __construct(CurrencyConversionService $converter)
     {
         $this->baseUri = config('services.mercadopago.base_uri');
         $this->publicKey = config('services.mercadopago.public_key');
         $this->accessToken = config('services.mercadopago.access_token');
         $this->baseCurrency = config('services.mercadopago.base_currency');
+        $this->converter = $converter;
     }
 
 
@@ -54,9 +56,8 @@ class MercadoPagoService
     }
 
 
-
-    public function resolveFactor(string $currency)
+    public function resolveFactor($currency)
     {
-        //
+       return $this->converter->convertCurrency($currency, $this->baseCurrency);
     }
 }

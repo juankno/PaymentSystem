@@ -40,7 +40,7 @@ class CurrencyConversionService
     }
 
 
-    public function converCurrency($from, $to)
+    public function convertCurrency($from, $to)
     {
         $response = $this->makeRequest(
             'GET',
