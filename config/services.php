@@ -20,6 +20,14 @@ return [
         'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
     ],
 
+    'mercadopago' => [
+        'base_uri' => env('MERCADOPAGO_BASE_URI'),
+        'public_key' => env('MERCADOPAGO_PUBLIC_KEY'),
+        'access_token' => env('MERCADOPAGO_ACCESS_TOKEN'),
+        'class' => App\Services\MercadoPagoService::class,
+        'base_currency' => 'cop',
+    ],
+
     'currency_conversion' => [
         'base_uri' => env('CURRENCY_CONVERSION_BASE_URI'),
         'api_key' => env('CURRENCY_CONVERSION_API_KEY'),
