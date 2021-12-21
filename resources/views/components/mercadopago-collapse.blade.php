@@ -16,11 +16,11 @@
 
     <div class="col-1"></div>
 
-    <div class="col-1">
+    <div class="col-2 col-sm-2 col-md-2 col-lg-1">
         <input type="text" class="form-control" data-checkout="cardExpirationMonth" placeholder="MM" required="">
     </div>
 
-    <div class="col-1">
+    <div class="col-2 col-sm-2 col-md-2 col-lg-1">
         <input type="text" class="form-control" data-checkout="cardExpirationYear" placeholder="YY" required="">
     </div>
 
@@ -72,10 +72,14 @@
     function setCardNetwork() {
         const cardNumber = document.getElementById('cardNumber');
 
+        if (!cardNumber.value) {
+            return;
+        }
+
         mercadopago.getPaymentMethod({
                 "bin": cardNumber.value.trim().split(' ').join('').substring(0, 6)
             },
-            function(status, response) {
+            (status, response) => {
 
                 const cardNetwork = document.getElementById('cardNetwork');
 
