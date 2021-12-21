@@ -26,17 +26,19 @@ class MercadoPagoService
 
     public function resolveAuthorization(&$queryParams, &$formParams, &$headers)
     {
-        //
+        $queryParams['access_token'] = $this->resolveAccessToken();
     }
+
 
     public function decodeResponse($response)
     {
         return json_decode($response);
     }
 
+
     public function resolveAccessToken()
     {
-        //
+        return $this->accessToken;
     }
 
 
