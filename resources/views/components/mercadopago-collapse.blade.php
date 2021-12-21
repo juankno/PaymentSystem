@@ -28,7 +28,7 @@
 
 <div class="form-group form-row">
     <div class="col-5">
-        <input type="text" class="form-control" data-checkout="cardHolderName" placeholder="Your Name" required="">
+        <input type="text" class="form-control" data-checkout="cardholderName" placeholder="Your Name" required="">
     </div>
     <div class="col-5">
         <input type="email" class="form-control" name="email" data-checkout="cardHolderEmail" placeholder="email@example.com" required="">
@@ -56,6 +56,7 @@
     </div>
 </div>
 
+<input type="hidden" name="card_token" id="cardToken">
 <input type="hidden" name="card_network" id="cardNetwork">
 
 @push('scripts')
@@ -70,21 +71,46 @@
 
 <script>
     function setCardNetwork() {
-        const cardNumber = document.getElementById('cardNumber');
-
-        if (!cardNumber.value) {
-            return;
-        }
-
+        const number = document.getElementById('cardNumber');
+        const cardNumber = number.value.trim().split(' ').join('').substring(0, 6);
         mercadopago.getPaymentMethod({
-                "bin": cardNumber.value.trim().split(' ').join('').substring(0, 6)
+                "bin": cardNumber
             },
-            (status, response) => {
+            function(status, response) {
 
                 const cardNetwork = document.getElementById('cardNetwork');
 
                 cardNetwork.value = response[0].id
+
             });
     }
+</script>
+
+<script>
+    const mercadoPagoForm = document.getElementById('paymentForm');
+
+    mercadoPagoForm.addEventListener('submit', (event) => {
+        if (mercadoPagoForm.elements.payment_platform.value === "{{ $platform->id }}") {
+            event.preventDefault();
+
+            mercadopago.createToken(mercadoPagoForm, function(status, response) {
+                if (status != 200 && status != 201) {
+                    const errors = document.getElementById('paymentErrors');
+                    errors.textContent = response.cause[0].description;
+                } else {
+
+                    setCardNetwork();
+
+                    const cardToken = document.getElementById('cardToken');
+
+                    cardToken.value = response.id;
+                    
+                    setTimeout(() => {
+                        mercadoPagoForm.submit();
+                    }, 2000);
+                }
+            })
+        }
+    })
 </script>
 @endpush
