@@ -44,6 +44,20 @@
     </div>
 </div>
 
+<div class="form-group form-row">
+    <div class="col">
+        <small class="form-text text-muted"> Your payment will be converted to {{strtoupper(config('services.mercadopago.base_currency')) }}</small>
+    </div>
+</div>
+
+<div class="form-group form-row">
+    <div class="col">
+        <small class="form-text text-danger" id="paymentErrors" role="alert"></small>
+    </div>
+</div>
+
+<input type="hidden" name="card_network" id="cardNetwork">
+
 @push('scripts')
 <script src="https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"></script>
 <script>
@@ -52,5 +66,21 @@
     mercadopago.setPublishableKey("{{ config('services.mercadopago.public_key') }}");
 
     mercadopago.getIdentificationTypes();
+</script>
+
+<script>
+    function setCardNetwork() {
+        const cardNumber = document.getElementById('cardNumber');
+
+        mercadopago.getPaymentMethod({
+                "bin": cardNumber.value.trim().split(' ').join('').substring(0, 6)
+            },
+            function(status, response) {
+
+                const cardNetwork = document.getElementById('cardNetwork');
+
+                cardNetwork.value = response[0].id
+            });
+    }
 </script>
 @endpush
