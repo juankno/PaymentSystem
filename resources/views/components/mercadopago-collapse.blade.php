@@ -28,7 +28,7 @@
 
 <div class="form-group form-row">
     <div class="col-5">
-        <input type="text" class="form-control" data-checkout="cardholderName" placeholder="Your Name">
+        <input type="text" class="form-control" name="name" data-checkout="cardholderName" placeholder="Your Name">
     </div>
     <div class="col-5">
         <input type="email" class="form-control" name="email" data-checkout="cardHolderEmail" placeholder="email@example.com">
