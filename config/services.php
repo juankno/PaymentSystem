@@ -24,8 +24,8 @@ return [
         'base_uri' => env('MERCADOPAGO_BASE_URI'),
         'public_key' => env('MERCADOPAGO_PUBLIC_KEY'),
         'access_token' => env('MERCADOPAGO_ACCESS_TOKEN'),
-        'class' => App\Services\MercadoPagoService::class,
         'base_currency' => 'cop',
+        'class' => App\Services\MercadoPagoService::class,
     ],
 
     'currency_conversion' => [
@@ -39,6 +39,16 @@ return [
         'client_id' => env('PAYPAL_CLIENT_ID'),
         'client_secret' => env('PAYPAL_CLIENT_SECRET'),
         'class' => App\Services\PaypalService::class,
+    ],
+
+    'payu' => [
+        'base_uri' => env('PAYU_BASE_URI'),
+        'account_id' => env('PAYU_ACCOUNT_ID'),
+        'merchant_id' => env('PAYU_MERCHANT_ID'),
+        'key' => env('PAYU_KEY'),
+        'secret' => env('PAYU_SECRET'),
+        'base_currency' => 'cop',
+        'class' => App\Services\PayUService::class,
     ],
 
     'stripe' => [
