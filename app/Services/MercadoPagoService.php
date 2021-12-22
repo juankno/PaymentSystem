@@ -70,7 +70,7 @@ class MercadoPagoService
                 'transaction_amount' => round($value * $this->resolveFactor($currency)),
                 'payment_method_id' => $cardNetwork,
                 'token' => $cardToken,
-                'installements' => $installements,
+                'installments' => $installements,
                 'statement_descriptor' => config('app.name'),
             ],
             [],
