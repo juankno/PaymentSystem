@@ -7,31 +7,31 @@
 <div class="form-group form-row">
 
     <div class="col-5">
-        <input type="text" class="form-control" id="cardNumber" data-checkout="cardNumber" placeholder="Card Number" required="">
+        <input type="text" class="form-control" id="cardNumber" data-checkout="cardNumber" placeholder="Card Number">
     </div>
 
     <div class="col-2">
-        <input type="text" class="form-control" data-checkout="securityCode" placeholder="CVC" required="">
+        <input type="text" class="form-control" data-checkout="securityCode" placeholder="CVC">
     </div>
 
     <div class="col-1"></div>
 
     <div class="col-2 col-sm-2 col-md-2 col-lg-1">
-        <input type="text" class="form-control" data-checkout="cardExpirationMonth" placeholder="MM" required="">
+        <input type="text" class="form-control" data-checkout="cardExpirationMonth" placeholder="MM">
     </div>
 
     <div class="col-2 col-sm-2 col-md-2 col-lg-1">
-        <input type="text" class="form-control" data-checkout="cardExpirationYear" placeholder="YY" required="">
+        <input type="text" class="form-control" data-checkout="cardExpirationYear" placeholder="YY">
     </div>
 
 </div>
 
 <div class="form-group form-row">
     <div class="col-5">
-        <input type="text" class="form-control" data-checkout="cardholderName" placeholder="Your Name" required="">
+        <input type="text" class="form-control" data-checkout="cardholderName" placeholder="Your Name">
     </div>
     <div class="col-5">
-        <input type="email" class="form-control" name="email" data-checkout="cardHolderEmail" placeholder="email@example.com" required="">
+        <input type="email" class="form-control" name="email" data-checkout="cardHolderEmail" placeholder="email@example.com">
     </div>
 </div>
 
@@ -40,7 +40,7 @@
         <select class="custom-select" data-checkout="docType"></select>
     </div>
     <div class="col-3">
-        <input type="text" class="form-control" data-checkout="docNumber" placeholder="Document" required="">
+        <input type="text" class="form-control" data-checkout="docNumber" placeholder="Document">
     </div>
 </div>
 
