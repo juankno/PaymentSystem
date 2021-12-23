@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Traits\ConsumesExternalServices;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class PayUService
 {
@@ -87,24 +88,62 @@ class PayUService
     }
 
 
-    public function createPayment($value, $currency, $cardNetwork, $cardToken, $email, $installements = 1)
+    public function createPayment($value, $currency, $name, $email, $card, $cvc, $year, $month, $network,  $installements = 1, $paymentCountry = 'CO')
     {
         return $this->makeRequest(
             'POST',
-            '/v1/payments',
+            '/payments-api/4.0/service.cgi',
             [],
             [
-                'payer' => [
-                    'email' => $email
+                'language' => $language = config('app.locale'),
+                'command' => 'SUBMIT_TRANSACTION',
+                'test' => false,
+                'transition' => [
+                    'type' => 'AUTHORIZATION_AND_CAPTURE',
+                    'paymentMethod' => strtoupper($network),
+                    'paymentCountry' => strtoupper($paymentCountry),
+                    'deviceSessionId' => session()->getId(),
+                    'ipAddress' => request()->ip(),
+                    'userAgent' => request()->header('User-Agent'),
+                    'creditCard' => [
+                        'number' => $card,
+                        'security_code' => $cvc,
+                        'expirationDate' => "{$year}/{$month}",
+                        'name' => 'APPROVED',
+                    ],
+                    'extraParameters' => [
+                        'INSTALLMENTS_NUMBER'  => $installements,
+                    ],
+                    'payer' => [
+                        'fullName' => $name,
+                        'emailAddress' => $email,
+                    ],
+                    'order' => [
+                        'accountId' => $this->accountId,
+                        'referenceCode' => $reference = Str::random(12),
+                        'description' => 'Testing PayU',
+                        'language' => $language,
+                        'signature' => $this->generateSignature($reference, $value = $value * $this->resolveFactor($currency)),
+                        'additionalValues' => [
+                            'TX_VALUE' => [
+                                'value' => $value,
+                                'currency' => $this->baseCurrency,
+                            ],
+                        ],
+                        'buyer' => [
+                            'fullName' => $name,
+                            'emailAddress' => $email,
+                            'shippingAddress' => [
+                                'street1' => '',
+                                'city' => '',
+                            ],
+                        ],
+                    ],
                 ],
-                'binary_mode' => true,
-                'transaction_amount' => round($value * $this->resolveFactor($currency)),
-                'payment_method_id' => $cardNetwork,
-                'token' => $cardToken,
-                'installments' => $installements,
-                'statement_descriptor' => config('app.name'),
             ],
-            [],
+            [
+                'Accept' => 'application/json'
+            ],
             $isJsonRequest = true,
         );
     }
