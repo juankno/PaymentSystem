@@ -32,7 +32,8 @@ class PayUService
 
     public function resolveAuthorization(&$queryParams, &$formParams, &$headers)
     {
-        //
+        $formParams['merchant']['apiKey'] = $this->key;
+        $formParams['merchant']['apiLogin'] = $this->secret;
     }
 
 
