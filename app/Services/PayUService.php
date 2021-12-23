@@ -98,7 +98,7 @@ class PayUService
                 'language' => $language = config('app.locale'),
                 'command' => 'SUBMIT_TRANSACTION',
                 'test' => false,
-                'transition' => [
+                'transaction' => [
                     'type' => 'AUTHORIZATION_AND_CAPTURE',
                     'paymentMethod' => strtoupper($network),
                     'paymentCountry' => strtoupper($paymentCountry),
@@ -107,7 +107,7 @@ class PayUService
                     'userAgent' => request()->header('User-Agent'),
                     'creditCard' => [
                         'number' => $card,
-                        'security_code' => $cvc,
+                        'securityCode' => $cvc,
                         'expirationDate' => "{$year}/{$month}",
                         'name' => 'APPROVED',
                     ],
