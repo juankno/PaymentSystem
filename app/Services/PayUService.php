@@ -47,38 +47,42 @@ class PayUService
     public function handlePayment(Request $request)
     {
         $request->validate([
-            "card_token" => "required",
-            "card_network" => "required",
+            "card" => "required",
+            "cvc" => "required",
+            "year" => "required",
+            "month" => "required",
+            "network" => "required",
             "email" => "required",
             "name" => "required",
         ]);
 
+
         $payment = $this->createPayment(
             $request->value,
             $request->currency,
-            $request->card_network,
-            $request->card_token,
+            $request->name,
             $request->email,
+            $request->card,
+            $request->cvc,
+            $request->year,
+            $request->month,
+            $request->network,
         );
 
-        if ($payment->status === 'approved') {
+        if ($payment->transactionResponse->state === "APPROVED") {
             $name = $request->name;
-            $currency = strtoupper($payment->currency_id);
-            $amount = number_format($payment->transaction_amount, 0, ',', '.');
 
-            $originalAmount = $request->value;
-            $originalCurrency = strtoupper($request->currency);
+            $amount = $request->value;
+            $currency = strtoupper($request->currency);
 
             return redirect()
                 ->route('home')
-                ->withSuccess(['payment' => "Thanks {$name}. We received your {$originalAmount} {$originalCurrency} payment ({$amount} {$currency})."]);
+                ->withSuccess(['payment' => "Thanks, {$name}. We received your {$amount}{$currency} payment."]);
         }
-
-
 
         return redirect()
             ->route('home')
-            ->withErrors('We were unable to confirm your payment. Try again later.');
+            ->withErrors('We were unable to process your payment. Check your details and try again later.');
     }
 
 
