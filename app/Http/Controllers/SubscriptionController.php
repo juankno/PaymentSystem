@@ -34,9 +34,20 @@ class SubscriptionController extends Controller
         //
     }
 
-    public function store()
+    public function store(Request $request)
     {
-        //
+        $rules = [
+            'plan' => 'required|exists:plans,slug',
+            'payment_platform' => 'required|exists:payment_platforms,id'
+        ];
+
+        $request->validate($rules);
+
+        $paymentPlatform = $this->paymentPlatformResolver->resolveService($request->payment_platform);
+
+        session()->put('subscriptionPlatformId', $request->payment_platform);
+
+        $paymentPlatform->handleSubscription($request); // TODO: pending subscription 
     }
 
     public function cancelled()
