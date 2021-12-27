@@ -21,7 +21,7 @@ class SubscriptionController extends Controller
 
     public function show()
     {
-        $paymentPlatforms = PaymentPlatform::where('subscriptions_enabled', false)->get(); // TODO: just payment platforms that is active
+        $paymentPlatforms = PaymentPlatform::where('subscriptions_enabled', true)->get();
 
         return view('subscribe')->with([
             'plans' => Plan::all(),

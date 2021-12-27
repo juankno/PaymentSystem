@@ -15,12 +15,15 @@ class PaypalService
 
     protected $clientSecret;
 
+    protected $plans;
+
 
     public function __construct()
     {
         $this->baseUri = config('services.paypal.base_uri');
         $this->clientId = config('services.paypal.client_id');
         $this->clientSecret = config('services.paypal.client_secret');
+        $this->plans = config('services.paypal.plans');
     }
 
 
@@ -77,6 +80,12 @@ class PaypalService
         return redirect()
             ->route('home')
             ->withErrors("We can't capture your payment. Try again please.");
+    }
+
+
+    public function handleSubscription(Request $request)
+    {
+        dd($this->plans);
     }
 
 
