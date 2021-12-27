@@ -41,7 +41,7 @@
                         @endauth
                         @if (! optional(auth()->user())->hasActiveSubscription())
                         <li class="nav-item">
-                            <a class="btn btn-outline-primary" href="#">Subscribe</a>
+                            <a class="btn btn-outline-primary" href="{{ route('subscribe.show') }}">Subscribe</a>
                         </li>
                         @endif
                     </ul>
