@@ -69,6 +69,7 @@ class PayUService
             $request->network,
         );
 
+
         if ($payment->transactionResponse->state === "APPROVED") {
             $name = $request->name;
 
@@ -127,7 +128,7 @@ class PayUService
                         'referenceCode' => $reference = Str::random(12),
                         'description' => 'Testing PayU',
                         'language' => $language,
-                        'signature' => $this->generateSignature($reference, $value = $value * $this->resolveFactor($currency)),
+                        'signature' => $this->generateSignature($reference, $value = round($value * $this->resolveFactor($currency))),
                         'additionalValues' => [
                             'TX_VALUE' => [
                                 'value' => $value,
