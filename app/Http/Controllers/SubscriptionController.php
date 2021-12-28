@@ -15,7 +15,7 @@ class SubscriptionController extends Controller
 
     public function __construct(PaymentPlatformResolver $paymentPlatformResolver)
     {
-        $this->middleware('auth');
+        $this->middleware(['auth', 'unsubscribed']);
         $this->paymentPlatformResolver = $paymentPlatformResolver;
     }
 
@@ -43,7 +43,7 @@ class SubscriptionController extends Controller
         $paymentPlatform = $this->paymentPlatformResolver->resolveService($request->payment_platform);
 
         session()->put('subscriptionPlatformId', $request->payment_platform);
-        
+
         return $paymentPlatform->handleSubscription($request);
     }
 
