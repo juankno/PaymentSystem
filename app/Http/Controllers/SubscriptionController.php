@@ -29,10 +29,6 @@ class SubscriptionController extends Controller
         ]);
     }
 
-    public function approval()
-    {
-        //
-    }
 
     public function store(Request $request)
     {
@@ -47,8 +43,15 @@ class SubscriptionController extends Controller
 
         session()->put('subscriptionPlatformId', $request->payment_platform);
 
-        $paymentPlatform->handleSubscription($request); // TODO: pending subscription 
+        return $paymentPlatform->handleSubscription($request);
     }
+
+
+    public function approval()
+    {
+        //
+    }
+
 
     public function cancelled()
     {

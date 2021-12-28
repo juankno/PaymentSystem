@@ -85,7 +85,20 @@ class PaypalService
 
     public function handleSubscription(Request $request)
     {
-        dd($this->plans);
+
+        $subscription = $this->createSubscription(
+            $request->plan,
+            $request->user()->name,
+            $request->user()->email
+        );
+
+        $subscriptionLinks = collect($subscription->links);
+
+        $approve = $subscriptionLinks->where('rel', 'approve')->first();
+
+        session()->put('subscriptionId', $subscription->id);
+
+        return redirect($approve->href);
     }
 
 
