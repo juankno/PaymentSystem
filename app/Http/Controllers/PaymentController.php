@@ -38,7 +38,6 @@ class PaymentController extends Controller
     public function approval()
     {
         if (session()->has('paymentPlatformId')) {
-
             $paymentPlatform = $this->paymentPlatformResolver->resolveService(session()->get('paymentPlatformId'));
 
             return $paymentPlatform->handleApproval();

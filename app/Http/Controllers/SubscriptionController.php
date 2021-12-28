@@ -43,7 +43,7 @@ class SubscriptionController extends Controller
         $paymentPlatform = $this->paymentPlatformResolver->resolveService($request->payment_platform);
 
         session()->put('subscriptionPlatformId', $request->payment_platform);
-
+        
         return $paymentPlatform->handleSubscription($request);
     }
 
@@ -56,18 +56,30 @@ class SubscriptionController extends Controller
 
         $request->validate($rules);
 
-        $plan = Plan::where('slug', $request->plan)->firstOrFail();
-        $user = $request->user();
+        if (session()->has('subscriptionPlatformId')) {
 
-        $subscription = Subscription::create([
-            'active_until' => now()->addDays($plan->duration_in_days),
-            'user_id' =>  $user->id,
-            'plan_id' => $plan->id,
-        ]);
+            $paymentPlatform = $this->paymentPlatformResolver->resolveService(session()->get('subscriptionPlatformId'));
+
+            if ($paymentPlatform->validateSubscription($request)) {
+
+                $plan = Plan::where('slug', $request->plan)->firstOrFail();
+                $user = $request->user();
+
+                $subscription = Subscription::create([
+                    'active_until' => now()->addDays($plan->duration_in_days),
+                    'user_id' =>  $user->id,
+                    'plan_id' => $plan->id,
+                ]);
+
+                return redirect()
+                    ->route('home')
+                    ->withSuccess(["subscription" => "Thanks {$user->name}. You have a {$plan->slug} subscription. Start using it"]);
+            }
+        }
 
         return redirect()
-            ->route('home')
-            ->withSuccess(["subscription" => "Thanks {$user->name}. You have a {$plan->slug} subscription. Start using it"]);
+            ->route('subscribe.show')
+            ->withErrors("We can't check your subscription, please try again.");
     }
 
 
