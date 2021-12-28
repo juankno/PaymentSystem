@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Resolvers\PaymentPlatformResolver;
 use App\Models\PaymentPlatform;
 use App\Models\Plan;
+use App\Models\Subscription;
 
 class SubscriptionController extends Controller
 {
@@ -29,10 +30,6 @@ class SubscriptionController extends Controller
         ]);
     }
 
-    public function approval()
-    {
-        //
-    }
 
     public function store(Request $request)
     {
@@ -46,12 +43,50 @@ class SubscriptionController extends Controller
         $paymentPlatform = $this->paymentPlatformResolver->resolveService($request->payment_platform);
 
         session()->put('subscriptionPlatformId', $request->payment_platform);
-
-        $paymentPlatform->handleSubscription($request); // TODO: pending subscription 
+        
+        return $paymentPlatform->handleSubscription($request);
     }
+
+
+    public function approval(Request $request)
+    {
+        $rules = [
+            'plan' => 'required|exists:plans,slug',
+        ];
+
+        $request->validate($rules);
+
+        if (session()->has('subscriptionPlatformId')) {
+
+            $paymentPlatform = $this->paymentPlatformResolver->resolveService(session()->get('subscriptionPlatformId'));
+
+            if ($paymentPlatform->validateSubscription($request)) {
+
+                $plan = Plan::where('slug', $request->plan)->firstOrFail();
+                $user = $request->user();
+
+                $subscription = Subscription::create([
+                    'active_until' => now()->addDays($plan->duration_in_days),
+                    'user_id' =>  $user->id,
+                    'plan_id' => $plan->id,
+                ]);
+
+                return redirect()
+                    ->route('home')
+                    ->withSuccess(["subscription" => "Thanks {$user->name}. You have a {$plan->slug} subscription. Start using it"]);
+            }
+        }
+
+        return redirect()
+            ->route('subscribe.show')
+            ->withErrors("We can't check your subscription, please try again.");
+    }
+
 
     public function cancelled()
     {
-        //
+        return redirect()
+            ->route('subscribe.show')
+            ->withErrors("You canceled the subscription process. Come back when you're ready");
     }
 }
