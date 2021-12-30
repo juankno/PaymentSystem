@@ -15,11 +15,14 @@ class StripeService
 
     protected $baseUri;
 
+    protected $plans;
+
     public function __construct()
     {
         $this->baseUri = config('services.stripe.base_uri');
         $this->key = config('services.stripe.key');
         $this->secret = config('services.stripe.secret');
+        $this->plans = config('services.stripe.plans');
     }
 
 
@@ -85,6 +88,12 @@ class StripeService
     }
 
 
+    public function handleSubscription(Request $request)
+    {
+        dd($this->plans, $request->all());
+    }
+
+
     public function createIntent($value, $currency, $paymentMethod)
     {
         return $this->makeRequest(
@@ -107,6 +116,38 @@ class StripeService
         return $this->makeRequest(
             'POST',
             "/v1/payment_intents/{$paymentIntentId}/confirm",
+        );
+    }
+
+
+    public function createCustomer($name, $email, $paymentMethod)
+    {
+        return $this->makeRequest(
+            'POST',
+            '/v1/customers',
+            [],
+            [
+                'name' => $name,
+                'email' => $email,
+                'payment_method' => $paymentMethod
+            ]
+        );
+    }
+
+
+    public function createSubscription($customerId, $paymentMethod, $priceId)
+    {
+        return $this->makeRequest(
+            'POST',
+            '/v1/subscriptions',
+            [],
+            [
+                'customer' => $customerId,
+                'items' => [
+                    ['price' => $priceId],
+                ],
+                'default_payment_method' => $paymentMethod
+            ]
         );
     }
 
