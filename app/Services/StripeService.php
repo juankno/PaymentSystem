@@ -15,11 +15,14 @@ class StripeService
 
     protected $baseUri;
 
+    protected $plans;
+
     public function __construct()
     {
         $this->baseUri = config('services.stripe.base_uri');
         $this->key = config('services.stripe.key');
         $this->secret = config('services.stripe.secret');
+        $this->plans = config('services.stripe.plans');
     }
 
 
@@ -85,6 +88,71 @@ class StripeService
     }
 
 
+    public function handleSubscription(Request $request)
+    {
+        $customer = $this->createCustomer(
+            $request->user()->name,
+            $request->user()->email,
+            $request->payment_method
+        );
+
+        $subscription = $this->createSubscription(
+            $customer->id,
+            $request->payment_method,
+            $this->plans[$request->plan]
+        );
+
+
+
+        if ($subscription->status == 'active') {
+            session()->put('subscriptionId', $subscription->id);
+
+            return redirect()->route(
+                'subscribe.approval',
+                [
+                    'plan' => $request->plan,
+                    'subscription_id' => $subscription->id
+                ],
+            );
+        }
+
+        $paymentIntent = $subscription->latest_invoice->payment_intent;
+
+        if ($paymentIntent->status === 'requires_action') {
+            $clientSecret = $paymentIntent->client_secret;
+
+            session()->put('subscriptionId', $subscription->id);
+
+
+            return view('stripe.3d-secure-subscription')
+                ->with([
+                    'clientSecret' => $clientSecret,
+                    'plan' => $request->plan,
+                    'paymentMethod' => $request->payment_method,
+                    'subscriptionId' => $subscription->id
+                ]);
+        }
+
+        return redirect()
+            ->route('subscribe.show')
+            ->withErrors('We were unable to active your subscription. Try again later.');
+    }
+
+
+    public function validateSubscription(Request $request): bool
+    {
+        if (session()->has('subscriptionId')) {
+            $subscriptionId = session()->get('subscriptionId');
+
+            session()->forget('subscriptionId');
+
+            return $request->subscription_id == $subscriptionId;
+        }
+
+        return false;
+    }
+
+
     public function createIntent($value, $currency, $paymentMethod)
     {
         return $this->makeRequest(
@@ -107,6 +175,39 @@ class StripeService
         return $this->makeRequest(
             'POST',
             "/v1/payment_intents/{$paymentIntentId}/confirm",
+        );
+    }
+
+
+    public function createCustomer($name, $email, $paymentMethod)
+    {
+        return $this->makeRequest(
+            'POST',
+            '/v1/customers',
+            [],
+            [
+                'name' => $name,
+                'email' => $email,
+                'payment_method' => $paymentMethod
+            ]
+        );
+    }
+
+
+    public function createSubscription($customerId, $paymentMethod, $priceId)
+    {
+        return $this->makeRequest(
+            'POST',
+            '/v1/subscriptions',
+            [],
+            [
+                'customer' => $customerId,
+                'items' => [
+                    ['price' => $priceId],
+                ],
+                'default_payment_method' => $paymentMethod,
+                'expand' => ['latest_invoice.payment_intent']
+            ]
         );
     }
 
