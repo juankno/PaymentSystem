@@ -102,6 +102,8 @@ class StripeService
             $this->plans[$request->plan]
         );
 
+
+
         if ($subscription->status == 'active') {
             session()->put('subscriptionId', $subscription->id);
 
@@ -113,6 +115,27 @@ class StripeService
                 ],
             );
         }
+
+        $paymentIntent = $subscription->latest_invoice->payment_intent;
+
+        if ($paymentIntent->status === 'requires_action') {
+            $clientSecret = $paymentIntent->client_secret;
+
+            session()->put('subscriptionId', $subscription->id);
+
+
+            return view('stripe.3d-secure-subscription')
+                ->with([
+                    'clientSecret' => $clientSecret,
+                    'plan' => $request->plan,
+                    'paymentMethod' => $request->payment_method,
+                    'subscriptionId' => $subscription->id
+                ]);
+        }
+
+        return redirect()
+            ->route('subscribe.show')
+            ->withErrors('We were unable to active your subscription. Try again later.');
     }
 
 
@@ -182,7 +205,8 @@ class StripeService
                 'items' => [
                     ['price' => $priceId],
                 ],
-                'default_payment_method' => $paymentMethod
+                'default_payment_method' => $paymentMethod,
+                'expand' => ['latest_invoice.payment_intent']
             ]
         );
     }
